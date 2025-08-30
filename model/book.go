@@ -15,3 +15,6 @@ type Book struct{
 // }
 var Books []Book
 
+func Create(newbook Book)  {
+	Books = append(Books, newbook) 
+}
