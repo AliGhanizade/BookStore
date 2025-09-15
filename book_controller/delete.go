@@ -7,11 +7,6 @@ import (
 )
 
 func (c *BookController) Delete(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "DELETE" {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
 	var requestBody struct {
 		ID int `json:"id"`
 	}
@@ -22,24 +17,14 @@ func (c *BookController) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	bookFound := false
-	var updateBooks []model.Book
-
-	for _, book := range model.Books {
-		if book.ID == requestBody.ID {
-			bookFound = true
-			continue
-		}
-		updateBooks = append(updateBooks, book)
-	}
-
-	if !bookFound {
-		http.Error(w, "Book not found ", http.StatusNotFound)
+	stauts, err := model.Delete(requestBody.ID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	model.Books = updateBooks
-
-	w.Header().Set("Content-Type", "application/json")
+	if !stauts {
+		http.Error(w, "Book not found", http.StatusNotFound)
+		return
+	}
 	json.NewEncoder(w).Encode(map[string]string{"message":"Book Deleted successfully"})
 }
