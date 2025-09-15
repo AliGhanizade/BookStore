@@ -2,6 +2,7 @@ package bookcontroller
 
 import (
 	"BookStore/model"
+	"BookStore/shared"
 	"encoding/json"
 	"net/http"
 )
@@ -13,18 +14,20 @@ func (c *BookController) Delete(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&requestBody)
 	if err != nil {
-		http.Error(w, "invalid request body ", http.StatusBadRequest)
+		shared.NewErrorResponse(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	stauts, err := model.Delete(requestBody.ID)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		shared.NewErrorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+
 	if !stauts {
-		http.Error(w, "Book not found", http.StatusNotFound)
+		shared.NewErrorResponse(w, http.StatusNotFound, "Book not found")
 		return
 	}
-	json.NewEncoder(w).Encode(map[string]string{"message":"Book Deleted successfully"})
+	
+	shared.NewResponse(w, http.StatusOK, "Book deleted successfully", nil)
 }

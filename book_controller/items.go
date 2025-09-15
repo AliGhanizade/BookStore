@@ -2,38 +2,36 @@ package bookcontroller
 
 import (
 	"BookStore/model"
-	"encoding/json"
-	"strconv"
+	"BookStore/shared"
 	"net/http"
+	"strconv"
 )
 
 func (c *BookController) GetAll(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	err := model.GetAll()
 
-	for _, book := range model.Books {
-		err := json.NewEncoder(w).Encode(book)
-		if err != nil {
-			http.Error(w,err.Error(),http.StatusBadRequest)
-		}
-	}	
-
-}
-
-func (c *BookController) GetByID(w http.ResponseWriter, r *http.Request, id string) {
-	idint, err := strconv.Atoi(id)
 	if err != nil {
-		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		shared.NewErrorResponse(w,http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	for _, book := range model.Books {
-		if idint == book.ID {
-			err := json.NewEncoder(w).Encode(book)
-			if err != nil {
-				http.Error(w,err.Error(),http.StatusBadRequest)
-			}
-			return
-		}
+	shared.NewResponse(w,http.StatusOK, "Books retrieved successfully", model.Books)
+	
+}
+
+func (c *BookController) GetByID(w http.ResponseWriter, r *http.Request, id string) {
+	idi, err := strconv.Atoi(id)
+	if err != nil {
+		shared.NewErrorResponse(w,http.StatusBadRequest, "Invalid ID")
+		return
 	}
-	http.Error(w, "Book not found", http.StatusNotFound)
+
+	book, found := model.GetByID(idi)
+
+	if found {
+		shared.NewResponse(w,http.StatusOK, "Book found", book)
+		return
+	}
+
+	shared.NewErrorResponse(w,http.StatusNotFound, "Book not found")
 }
