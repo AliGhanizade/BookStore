@@ -2,25 +2,26 @@ package bookcontroller
 
 import (
 	"BookStore/model"
+	"BookStore/shared"
 	"encoding/json"
-	"net/http"	
+	"net/http"
 )
 
 func (c *BookController) Create(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-		return
-	}
 	var newBook model.Book
 
 	err := json.NewDecoder(r.Body).Decode(&newBook)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		shared.NewErrorResponse(w,http.StatusBadRequest, "Invalid request payload")
 		return
 	}
-	model.Create(newBook)
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"message": "Book Added in slice"})
+	err = model.Create(&newBook)
+	if err != nil {
+		shared.NewErrorResponse(w,http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	shared.NewResponse(w,http.StatusCreated, "Book created successfully", newBook)
 
 }
