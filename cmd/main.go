@@ -1,7 +1,11 @@
 package main
 
-import "BookStore/routers"
+import (
+	"BookStore/config"
+	"BookStore/routers"
+)
 
 func main() {
+	config.CreateFile()
 	routers.Run()
 }
