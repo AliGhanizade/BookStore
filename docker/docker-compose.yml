@@ -1,10 +1,7 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:15
     container_name: bookstore_postgres
-    restart: always
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: secret
@@ -13,6 +10,17 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: bookstore_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8081:80"
+    depends_on:
+      - postgres
 
 volumes:
   postgres_data:
