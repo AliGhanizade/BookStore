@@ -7,11 +7,11 @@ import (
 )
 
 type User struct {
-	ID         uint           `json:"id" gorm:"primaryKey"`
-	Name       string         `json:"name" gorm:"size:100"`
-	Phone      string         `json:"phone" gorm:"uniqueIndex"`
-	Password   string         `json:"password"`
-	Permission string         `json:"permission"`
+	ID         uint           ` gorm:"primaryKey"`
+	Name       string         ` gorm:"size:100"`
+	Phone      string         `gorm:"uniqueIndex"`
+	Password   string         
+	Permission string        
 	CreatedAt  time.Time     
 	UpdatedAt  time.Time
 	DeletedAt  gorm.DeletedAt `gorm:"index"`
