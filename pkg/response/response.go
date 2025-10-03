@@ -9,8 +9,8 @@ import (
 
 type response struct {
 	Code    int         `json:"code"`
-	Data    interface{} `json:"data,omitempty"`
 	Message string      `json:"message,omitempty"`
+	Data    interface{} `json:"data,omitempty"`
 }
 type errorResponse struct {
 	Code    int    `json:"code"`
@@ -20,8 +20,8 @@ type errorResponse struct {
 func Response(ctx *gin.Context, code int, data interface{}, message string) {
 	ctx.JSON(http.StatusOK, response{
 		Code:    code,
-		Data:   data,
 		Message: message,
+		Data:   data,
 	})
 }
 
