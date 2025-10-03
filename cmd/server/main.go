@@ -22,17 +22,24 @@ func main() {
 		log.Fatal("cannot connect to db:", err)
 	}
 
-	if err := db.AutoMigrate(&domain.User{}); err != nil {
+	if err := db.AutoMigrate(&domain.User{}, &domain.Book{}); err != nil {
 		log.Fatal("failed to migrate:", err)
 	}
 
+
 	userRepo := repository.NewUserRepository(db)
 	userService := service.NewUserService(userRepo)
+
+	bookRepo := repository.NewBookRepository(db)
+	bookService := service.NewBookService(bookRepo)
 
 	r := gin.Default()
 
 	userHandler := transport.NewUserHandler(userService)
 	userHandler.RegisterRoutes(r)
+
+	bookHandler := transport.NewBookHandler(bookService)
+	bookHandler.RegisterRoutes(r)
 
 	port := 8080
 	fmt.Printf("Server running on :%d\n", port)
